@@ -1,0 +1,53 @@
+name: Unpack KK Special Bakery full-stack package
+
+on:
+  push:
+    branches:
+      - fullstack-setup
+    paths:
+      - "KK_Special_Bakery_Fullstack_Package.zip"
+
+permissions:
+  contents: write
+
+jobs:
+  unpack-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the setup branch
+        uses: actions/checkout@v4
+        with:
+          ref: fullstack-setup
+          persist-credentials: true
+
+      - name: Validate and safely unpack the package
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="KK_Special_Bakery_Fullstack_Package.zip"
+          test -s "$archive"
+          unzip -t "$archive"
+          if unzip -Z1 "$archive" | grep -Eq '(^/|(^|/)\.\.(/|$))'; then
+            echo "Unsafe path found in ZIP; refusing to extract."
+            exit 1
+          fi
+          workdir="$(mktemp -d)"
+          unzip -q "$archive" -d "$workdir"
+          source_dir="$workdir/kk_bakery_fullstack"
+          test -f "$source_dir/public/index.html"
+          test -d "$source_dir/functions"
+          test -f "$source_dir/migrations/schema.sql"
+          # Copy package files into the repository root without overwriting
+          # any existing files; keep the current root index.html untouched.
+          cp -an "$source_dir/." .
+          rm -rf "$workdir"
+          rm -f "$archive" ".github/workflows/unpack-bakery-package.yml"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No files changed; nothing to commit."
+            exit 0
+          fi
+          git commit -m "Add full-stack bakery application files"
+          git push origin HEAD:fullstack-setup
