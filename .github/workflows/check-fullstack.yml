@@ -1,0 +1,32 @@
+name: Check KK Special Bakery full-stack project
+
+on:
+  push:
+    branches:
+      - fullstack-setup
+    paths:
+      - "functions/**"
+      - "public/**"
+      - "migrations/**"
+      - "tests/**"
+      - "package.json"
+      - ".github/workflows/check-fullstack.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out fullstack-setup
+        uses: actions/checkout@v4
+        with:
+          ref: fullstack-setup
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run project checks
+        run: npm run check
