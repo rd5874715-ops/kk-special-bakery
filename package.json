@@ -1,0 +1,8 @@
+{
+  "name": "kk-special-bakery-fullstack",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node tests/check-project.mjs"
+  }
+}

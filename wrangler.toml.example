@@ -1,0 +1,14 @@
+# Optional Wrangler configuration. Keep this file named wrangler.toml only after
+# replacing DATABASE_ID with the actual D1 database ID from your Cloudflare account.
+name = "kk-special-bakery"
+pages_build_output_dir = "./public"
+compatibility_date = "2026-10-25"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kk-special-bakery-db"
+database_id = "REPLACE_WITH_REAL_D1_DATABASE_ID"
+
+[[r2_buckets]]
+binding = "BAKERY_IMAGES"
+bucket_name = "kk-bakery-images"
