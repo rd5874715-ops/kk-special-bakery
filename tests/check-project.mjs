@@ -23,6 +23,17 @@ assert.match(html, /id="products"/);
 assert.match(html, /id="backendWarning"/);
 assert.match(html, /initializeBackend\(\)/);
 assert.match(html, /Share bill PDF \/ WhatsApp/);
+assert.match(html, /WELCOME TO OUR BAKERY/);
+assert.match(html, /PRIVATE WORKSPACE/);
+assert.match(html, /CATALOG MANAGEMENT/);
+assert.match(html, /ORDER OPERATIONS/);
+assert.match(html, /BRAND EXPERIENCE/);
+assert.match(html, /VISUAL IDENTITY/);
+assert.match(html, /STORE CONFIGURATION/);
+assert.doesNotMatch(html, /onclick="addDashboard\(\)"/);
+assert.match(html, /id="blogo" type="file" accept="image\/\*"/);
+assert.match(html, /id="storePhotoFile" type="file" accept="image\/\*"/);
+
 const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/);
 assert.ok(scriptMatch, 'inline website script should exist');
 const tempScript = join(tmpdir(), `kk-inline-${process.pid}.mjs`);
