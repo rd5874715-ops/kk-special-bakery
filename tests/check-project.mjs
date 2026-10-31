@@ -19,6 +19,11 @@ await walk(functionDir);
 for (const file of jsFiles) execFileSync(process.execPath, ['--check', file], { stdio: 'pipe' });
 
 const html = await readFile(join(root, 'public', 'index.html'), 'utf8');
+assert.match(html, /<html lang="en-IN">/);
+assert.match(html, /KK Special Bakery \\| Premium Cakes, Pastries &amp; Fresh Bakes/);
+assert.match(html, /name="description"/);
+assert.match(html, /name="theme-color"/);
+assert.doesNotMatch(html, /Complete Owner Control Demo/);
 assert.match(html, /id="products"/);
 assert.match(html, /id="backendWarning"/);
 assert.match(html, /initializeBackend\(\)/);
