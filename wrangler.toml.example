@@ -6,7 +6,7 @@ compatibility_date = "2026-10-25"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "kk-special-bakery-db"
+database_name = "kk-bakery-db"
 database_id = "REPLACE_WITH_REAL_D1_DATABASE_ID"
 
 [[r2_buckets]]
