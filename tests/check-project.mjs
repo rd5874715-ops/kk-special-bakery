@@ -20,7 +20,7 @@ for (const file of jsFiles) execFileSync(process.execPath, ['--check', file], { 
 
 const html = await readFile(join(root, 'public', 'index.html'), 'utf8');
 assert.match(html, /<html lang="en-IN">/);
-assert.match(html, /KK Special Bakery \\| Premium Cakes, Pastries &amp; Fresh Bakes/);
+assert.match(html, /<title>KK Special Bakery \\| Premium Cakes, Pastries & Fresh Bakes<\\/title>/);
 assert.match(html, /name="description"/);
 assert.match(html, /name="theme-color"/);
 assert.doesNotMatch(html, /Complete Owner Control Demo/);
