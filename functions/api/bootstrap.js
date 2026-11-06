@@ -10,7 +10,7 @@ export async function onRequestGet({ env }) {
 
   try {
     const [rows, config] = await Promise.all([
-      env.DB.prepare('SELECT id, name, price, description, category, available, emoji, image, sort_order FROM products ORDER BY sort_order, id').all(),
+      env.DB.prepare('SELECT id, name, price, description, category, available, emoji, image, sort_order, stock_quantity, low_stock_threshold FROM products ORDER BY sort_order, id').all(),
       getAppConfig(env),
     ]);
     return json({ backendReady: true, products: (rows.results || []).map(mapProduct), config });
