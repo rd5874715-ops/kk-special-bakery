@@ -1,7 +1,8 @@
 import { json, errorJson, readJson, sameOrigin } from '../../_lib/common.js';
-import { validCustomerInput,makePasswordRecord,createCustomerSession,customerCookie } from '../../_lib/commerce.js';
+import { validCustomerInput,makePasswordRecord,createCustomerSession,customerCookie,customerLoginAllowed } from '../../_lib/commerce.js';
 export async function onRequestPost(context) {
   if(!sameOrigin(context.request)) return errorJson('Request origin could not be verified.',403);
+  const allowed=await customerLoginAllowed(context.env,context.request,'customer-register');if(!allowed)return errorJson('Too many account creation attempts. Wait 15 minutes and try again.',429);
   let body; try{body=await readJson(context.request)}catch(e){return errorJson(e.message,400)}
   let input,record;
   try{input=validCustomerInput(body);record=await makePasswordRecord(input.password)}catch(e){return errorJson(e.message,400)}
