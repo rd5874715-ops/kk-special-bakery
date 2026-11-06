@@ -143,6 +143,8 @@ export function mapProduct(row) {
     emoji: row.emoji || '🍰',
     image: row.image || '',
     sortOrder: Number(row.sort_order || 0),
+    stockQuantity: Number(row.stock_quantity ?? -1),
+    lowStockThreshold: Number(row.low_stock_threshold ?? 5),
   };
 }
 
@@ -189,5 +191,8 @@ export function publicProductBody(body) {
   if (!category || category.length > 50) throw new Error('Category must be 1–50 characters.');
   const image = validImageUrl(body.image || '');
   if (body.image && !image) throw new Error('Image URL is not valid. Upload the picture again.');
-  return { name, price, description, category, emoji, image, available: body.available !== false };
+  const stockQuantity = Number.isSafeInteger(Number(body.stockQuantity ?? body.stock_quantity ?? -1)) ? Number(body.stockQuantity ?? body.stock_quantity ?? -1) : -1;
+  const lowStockThreshold = Number.isSafeInteger(Number(body.lowStockThreshold ?? body.low_stock_threshold ?? 5)) ? Number(body.lowStockThreshold ?? body.low_stock_threshold ?? 5) : 5;
+  if (stockQuantity < -1 || stockQuantity > 1000000 || lowStockThreshold < 0 || lowStockThreshold > 100000) throw new Error('Inventory quantity is invalid.');
+  return { name, price, description, category, emoji, image, available: body.available !== false, stockQuantity, lowStockThreshold };
 }
