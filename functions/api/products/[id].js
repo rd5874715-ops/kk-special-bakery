@@ -10,8 +10,8 @@ export async function onRequestPut(context) {
   catch (error) { return errorJson(error.message, 400); }
   try {
     const result = await context.env.DB.prepare(
-      'UPDATE products SET name = ?, price = ?, description = ?, category = ?, available = ?, emoji = ?, image = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
-    ).bind(body.name, body.price, body.description, body.category, body.available ? 1 : 0, body.emoji, body.image, id).run();
+      'UPDATE products SET name = ?, price = ?, description = ?, category = ?, available = ?, emoji = ?, image = ?, stock_quantity = ?, low_stock_threshold = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+    ).bind(body.name, body.price, body.description, body.category, body.available ? 1 : 0, body.emoji, body.image, body.stockQuantity, body.lowStockThreshold, id).run();
     if (!result.meta.changes) return errorJson('Menu item was not found.', 404);
     return json({ ok: true });
   } catch (error) {
