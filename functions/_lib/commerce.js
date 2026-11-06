@@ -32,6 +32,15 @@ export function customerCookie(token) {
 export function clearCustomerCookie() {
   return 'kk_customer_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0';
 }
+export async function customerLoginAllowed(env,request,scope='login') {
+  const ip=request.headers.get('CF-Connecting-IP')||'unknown';
+  const secret=String(env.SESSION_SECRET||'customer-auth');
+  const ipHash=await digest(scope+':'+ip+':'+secret);
+  const count=await env.DB.prepare('SELECT COUNT(*) AS total FROM login_attempts WHERE ip_hash=? AND attempted_at>unixepoch()-900').bind(ipHash).first();
+  if(Number(count?.total||0)>=10)return false;
+  await env.DB.prepare('INSERT INTO login_attempts (ip_hash) VALUES (?)').bind(ipHash).run();
+  return true;
+}
 export async function createCustomerSession(env,customerId) {
   const token=newOpaqueToken(), tokenHash=await digest(token), expires=Math.floor(Date.now()/1000)+604800;
   await env.DB.prepare('INSERT INTO customer_sessions (token_hash,customer_id,expires_at) VALUES (?,?,?)').bind(tokenHash,customerId,expires).run();
