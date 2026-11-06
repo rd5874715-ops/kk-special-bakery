@@ -38,6 +38,15 @@ CREATE TABLE IF NOT EXISTS coupons (
 );
 CREATE INDEX IF NOT EXISTS idx_coupons_code_active ON coupons(code, active);
 
+CREATE TABLE IF NOT EXISTS coupon_reservations (
+  order_id INTEGER PRIMARY KEY REFERENCES orders(id) ON DELETE CASCADE,
+  coupon_id INTEGER NOT NULL REFERENCES coupons(id),
+  discount_amount REAL NOT NULL CHECK(discount_amount >= 0),
+  state TEXT NOT NULL DEFAULT 'reserved' CHECK(state IN ('reserved','applied','released')),
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS payment_events (
   event_id TEXT PRIMARY KEY,
   event_type TEXT NOT NULL,
@@ -60,6 +69,19 @@ ALTER TABLE orders ADD COLUMN stock_reserved INTEGER NOT NULL DEFAULT 0 CHECK(st
 ALTER TABLE orders ADD COLUMN rider_lat REAL;
 ALTER TABLE orders ADD COLUMN rider_lng REAL;
 ALTER TABLE orders ADD COLUMN rider_location_updated_at TEXT;
+ALTER TABLE orders ADD COLUMN tracking_token_hash TEXT;
+ALTER TABLE orders ADD COLUMN delivery_status TEXT NOT NULL DEFAULT 'not_dispatched' CHECK(delivery_status IN ('not_dispatched','assigned','picked_up','nearby','delivered'));
+ALTER TABLE orders ADD COLUMN rider_name TEXT;
+
+CREATE TABLE IF NOT EXISTS delivery_updates (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  latitude REAL NOT NULL CHECK(latitude BETWEEN -90 AND 90),
+  longitude REAL NOT NULL CHECK(longitude BETWEEN -180 AND 180),
+  note TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_delivery_updates_order ON delivery_updates(order_id, created_at DESC);
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_orders_payment_gateway_order ON orders(payment_gateway_order_id) WHERE payment_gateway_order_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_orders_customer ON orders(customer_id, created_at DESC);
