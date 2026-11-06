@@ -48,7 +48,7 @@ export async function onRequestPost(context){
   await context.env.DB.batch(items.map(item=>context.env.DB.prepare("UPDATE products SET stock_quantity=CASE WHEN available=1 AND (stock_quantity=-1 OR stock_quantity>=?) THEN CASE WHEN stock_quantity=-1 THEN -1 ELSE stock_quantity-? END ELSE -2 END,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(item.qty,item.qty,item.id)));
   let orderId=null;
   try{
-   const ins=await context.env.DB.prepare("INSERT INTO orders (customer_name,phone,address,city,pin,subtotal,delivery_fee,total,status,items_json,payment_status,payment_method,customer_id,coupon_code,coupon_discount,stock_reserved) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)").bind(customer.name,customer.phone,address,city,pin,subtotal,deliveryFee,total,'New',JSON.stringify(items),'pending','razorpay',customer.id,couponCode,discount).run();
+   const ins=await context.env.DB.prepare("INSERT INTO orders (customer_name,phone,address,city,pin,subtotal,delivery_fee,total,status,items_json,payment_status,payment_method,customer_id,coupon_code,coupon_discount,stock_reserved,stock_deducted) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,1)").bind(customer.name,customer.phone,address,city,pin,subtotal,deliveryFee,total,'New',JSON.stringify(items),'pending','razorpay',customer.id,couponCode,discount).run();
    orderId=Number(ins.meta.last_row_id);
    if(couponId){
     const reserved=await context.env.DB.prepare("UPDATE coupons SET used_count=used_count+1,updated_at=CURRENT_TIMESTAMP WHERE id=? AND active=1 AND (usage_limit IS NULL OR used_count<usage_limit)").bind(couponId).run();
