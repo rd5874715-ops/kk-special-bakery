@@ -164,6 +164,12 @@ export function mapOrder(row) {
     status: row.status,
     items,
     createdAt: row.created_at,
+    paymentStatus: row.payment_status || 'unpaid',
+    paymentMethod: row.payment_method || 'cod',
+    couponCode: row.coupon_code || null,
+    couponDiscount: Number(row.coupon_discount || 0),
+    deliveryStatus: row.delivery_status || 'not_dispatched',
+    riderName: row.rider_name || '',
   };
 }
 
