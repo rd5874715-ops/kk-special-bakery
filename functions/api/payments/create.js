@@ -60,7 +60,7 @@ export async function onRequestPost(context){
    const gatewayData=await gateway.json().catch(()=>({}));
    if(!gateway.ok||!gatewayData.id)throw new Error(gatewayData.error?.description||'Payment provider could not create the test order.');
    await context.env.DB.prepare("UPDATE orders SET payment_gateway_order_id=? WHERE id=?").bind(gatewayData.id,orderId).run();
-   return json({ok:true,localOrderId:orderId,keyId,razorpayOrderId:gatewayData.id,amount:gatewayData.amount,currency:gatewayData.currency,prefill:{name:customer.name,email:customer.email,contact:customer.phone},discount,deliveryFee},201);
+   return json({ok:true,localOrderId:orderId,keyId,razorpayOrderId:gatewayData.id,amount:gatewayData.amount,currency:gatewayData.currency,prefill:{name:customer.name,email:customer.email,contact:customer.phone},discount,deliveryFee,subtotal,total,items,couponCode},201);
   }catch(error){
    if(orderId)await releaseReservation(context.env,orderId,items,couponId);
    else await context.env.DB.batch(items.map(item=>context.env.DB.prepare("UPDATE products SET stock_quantity=CASE WHEN stock_quantity=-1 THEN -1 ELSE stock_quantity+? END WHERE id=?").bind(item.qty,item.id))).catch(()=>{});
