@@ -66,6 +66,7 @@ ALTER TABLE orders ADD COLUMN customer_id INTEGER REFERENCES customers(id);
 ALTER TABLE orders ADD COLUMN coupon_code TEXT;
 ALTER TABLE orders ADD COLUMN coupon_discount REAL NOT NULL DEFAULT 0 CHECK(coupon_discount >= 0);
 ALTER TABLE orders ADD COLUMN stock_reserved INTEGER NOT NULL DEFAULT 0 CHECK(stock_reserved IN (0,1));
+ALTER TABLE orders ADD COLUMN stock_deducted INTEGER NOT NULL DEFAULT 0 CHECK(stock_deducted IN (0,1));
 ALTER TABLE orders ADD COLUMN rider_lat REAL;
 ALTER TABLE orders ADD COLUMN rider_lng REAL;
 ALTER TABLE orders ADD COLUMN rider_location_updated_at TEXT;
