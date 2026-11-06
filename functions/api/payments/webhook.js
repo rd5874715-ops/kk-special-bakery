@@ -32,7 +32,7 @@ export async function onRequestPost({request,env}){
    }
    await env.DB.batch([
     env.DB.prepare("UPDATE orders SET payment_status='failed',stock_reserved=0,stock_deducted=0,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(order.id),
-    env.DB.prepare("UPDATE coupons SET used_count=CASE WHEN used_count>0 THEN used_count-1 ELSE 0 END,updated_at=CURRENT_TIMESTAMP WHERE id=(SELECT coupon_id FROM coupon_reservations WHERE order_id=?)").bind(order.id),
+    env.DB.prepare("UPDATE coupons SET used_count=CASE WHEN used_count>0 THEN used_count-1 ELSE 0 END,updated_at=CURRENT_TIMESTAMP WHERE id=(SELECT coupon_id FROM coupon_reservations WHERE order_id=? AND state='reserved')").bind(order.id),
     env.DB.prepare("UPDATE coupon_reservations SET state='released',updated_at=CURRENT_TIMESTAMP WHERE order_id=? AND state='reserved'").bind(order.id)
    ]);
   }
