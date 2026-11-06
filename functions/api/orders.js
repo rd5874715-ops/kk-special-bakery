@@ -78,7 +78,7 @@ export async function onRequestPost({ request, env }) {
       "UPDATE products SET stock_quantity=CASE WHEN available=1 AND (stock_quantity=-1 OR stock_quantity>=?) THEN CASE WHEN stock_quantity=-1 THEN -1 ELSE stock_quantity-? END ELSE -2 END,updated_at=CURRENT_TIMESTAMP WHERE id=?"
     ).bind(item.qty, item.qty, item.id));
     statements.push(env.DB.prepare(
-      "INSERT INTO orders (customer_name,phone,address,city,pin,subtotal,delivery_fee,total,status,items_json,payment_status,payment_method,customer_id,coupon_code,coupon_discount,stock_reserved) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0)"
+      "INSERT INTO orders (customer_name,phone,address,city,pin,subtotal,delivery_fee,total,status,items_json,payment_status,payment_method,customer_id,coupon_code,coupon_discount,stock_reserved,stock_deducted) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,1)"
     ).bind(name, phone, address, city, pin, subtotal, deliveryFee, total, 'New', JSON.stringify(items), 'unpaid', 'cod', signedCustomer?.id || null, coupon?.code || null, discount));
     if (coupon) statements.push(env.DB.prepare(
       "INSERT INTO coupon_reservations (order_id,coupon_id,discount_amount,state) VALUES (last_insert_rowid(),?,?,'applied')"
