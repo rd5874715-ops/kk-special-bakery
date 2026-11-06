@@ -59,8 +59,8 @@ export function validCustomerInput(body) {
   const phone=String(body?.phone||'').trim();
   const password=String(body?.password||'');
   if(name.length<2||name.length>100) throw new Error('Name must contain 2–100 characters.');
-  if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)||email.length>190) throw new Error('Enter a valid email address.');
-  if(!/^\\+?[0-9 ()-]{10,18}$/.test(phone)) throw new Error('Enter a valid phone number.');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||email.length>190) throw new Error('Enter a valid email address.');
+  if(!/^\+?[0-9 ()-]{10,18}$/.test(phone)) throw new Error('Enter a valid phone number.');
   if(password.length<10||password.length>128) throw new Error('Password must be 10–128 characters.');
   return {name,email,phone,password};
 }
